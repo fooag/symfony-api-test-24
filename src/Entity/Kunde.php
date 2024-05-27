@@ -13,17 +13,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KundeRepository::class)]
 #[ORM\Table('tbl_kunden', 'std')]
 #[ApiResource(
     operations: [
         new GetCollection(uriTemplate: '/kunden'),
-        new Post(uriTemplate: '/kunden'),
+        new Post(uriTemplate: '/kunden', validationContext: ['groups' => ['write']]),
         new Get(uriTemplate: '/kunden/{id}'),
-        new Put(uriTemplate: '/kunden/{id}'),
+        new Put(uriTemplate: '/kunden/{id}', validationContext: ['groups' => ['write']]),
         new Delete(uriTemplate: '/kunden/{id}'),
     ],
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
 )]
 class Kunde
 {
@@ -32,12 +35,16 @@ class Kunde
     #[ORM\Column(length: 36)]
     private string $id;
 
+    #[Assert\NotBlank(groups: ['write'])]
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $vorname = null;
 
-    #[ORM\Column(length: 255, nullable: false, name: 'name')]
+    #[Assert\NotBlank(groups: ['write'])]
+    #[ORM\Column(name: 'name', length: 255, nullable: false)]
     private ?string $nachname = null;
 
+    #[Assert\NotBlank(groups: ['write'])]
+    #[Assert\Date(groups: ['write'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $geburtsdatum = null;
 

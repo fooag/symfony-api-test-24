@@ -18,11 +18,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     operations: [
         new GetCollection(uriTemplate: '/adressen'),
-        new Post(uriTemplate: '/adressen'),
+        new Post(uriTemplate: '/adressen', validationContext: ['groups' => ['Default', 'write']]),
         new Get(uriTemplate: '/adressen/{id}'),
-        new Put(uriTemplate: '/adressen/{id}'),
+        new Put(uriTemplate: '/adressen/{id}', validationContext: ['groups' => ['Default', 'write']]),
         new Delete(uriTemplate: '/adressen/{id}'),
     ],
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
 )]
 #[ApiResource(
     uriTemplate: '/kunden/{id}/adressen',
@@ -32,7 +34,8 @@ use Doctrine\ORM\Mapping as ORM;
             fromProperty: 'kundeAdresses',
             fromClass: Kunde::class,
         )
-    ]
+    ],
+    normalizationContext: ['groups' => ['read']],
 )]
 class Adresse
 {
@@ -41,15 +44,19 @@ class Adresse
     #[ORM\Column(name: 'adresse_id')]
     private int $id;
 
+    #[Assert\NotBlank(groups: ['write'])]
     #[ORM\Column(type: Types::TEXT, nullable: false)]
     private ?string $strasse = null;
 
+    #[Assert\NotBlank(groups: ['write'])]
     #[ORM\Column(length: 10, nullable: false)]
     private ?string $plz = null;
 
+    #[Assert\NotBlank(groups: ['write'])]
     #[ORM\Column(type: Types::TEXT, nullable: false)]
     private ?string $ort = null;
 
+    #[Assert\NotBlank(groups: ['write'])]
     #[ORM\Column(length: 2, nullable: false)]
     private ?string $bundesland = null;
 

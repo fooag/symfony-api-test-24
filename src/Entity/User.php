@@ -23,13 +23,17 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(uriTemplate: '/user'),
         new Post(
             uriTemplate: '/user',
+            validationContext: ['groups' => ['Default', 'write']],
         ),
         new Get(uriTemplate: '/user/{id}'),
         new Put(
             uriTemplate: '/user/{id}',
+            validationContext: ['groups' => ['Default', 'write']],
         ),
         new Delete(uriTemplate: '/user/{id}'),
     ],
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
 )]
 #[ApiResource(
     uriTemplate: '/kunden/{id}/user',
@@ -41,6 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
         )
     ],
+    normalizationContext: ['groups' => ['read']],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -49,12 +54,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private int $id;
 
+    #[Assert\Email(groups: ['write'])]
     #[ORM\Column(length: 200, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(name: 'passwd')]
     private ?string $password = null;
 
+    #[Assert\NotBlank(groups: ['write'])]
+    //  8 Zeichen lang sein
+    #[Assert\Length(min: 8, groups: ['write'])]
+    // mind. eine Zahl
+    #[Assert\Regex(pattern: '/\d+/', groups: ['write'])]
+    // mind. ein Sonderzeichen enthalten
+    #[Assert\Regex(pattern: '/\W+/', groups: ['write'])]
+    // Groß/Kleinbuchstaben
+    #[Assert\Regex(pattern: '/[A-Z]+/', groups: ['write'])]
+    #[Assert\Regex(pattern: '/[a-z]+/', groups: ['write'])]
     private ?string $plainPassword = null;
 
     #[ORM\OneToOne(inversedBy: 'kunde_user', cascade: ['persist', 'remove'])]
