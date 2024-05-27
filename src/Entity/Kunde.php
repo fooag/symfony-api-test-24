@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KundeRepository::class)]
@@ -33,18 +34,22 @@ class Kunde
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(length: 36)]
+    #[Groups(['read'])]
     private string $id;
 
     #[Assert\NotBlank(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $vorname = null;
 
     #[Assert\NotBlank(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(name: 'name', length: 255, nullable: false)]
     private ?string $nachname = null;
 
     #[Assert\NotBlank(groups: ['write'])]
     #[Assert\Date(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $geburtsdatum = null;
 
@@ -55,11 +60,12 @@ class Kunde
     private ?bool $geloescht = null;
 
     #[ORM\ManyToOne(inversedBy: 'kunden')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'vermittler_id', referencedColumnName: 'id', nullable: false)]
+    #[Groups(['read'])]
     private ?Vermittler $vermittler = null;
 
     #[ORM\OneToOne(mappedBy: 'kunde', cascade: ['persist', 'remove'])]
-    private ?User $kunde_user = null;
+    private ?User $kundeUser = null;
 
     public function __construct()
     {
@@ -136,11 +142,11 @@ class Kunde
 
     public function getKundeUser(): ?User
     {
-        return $this->kunde_user;
+        return $this->kundeUser;
     }
 
-    public function setKundeUser(?User $kunde_user): void
+    public function setKundeUser(?User $kundeUser): void
     {
-        $this->kunde_user = $kunde_user;
+        $this->kundeUser = $kundeUser;
     }
 }

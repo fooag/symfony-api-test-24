@@ -12,6 +12,8 @@ use ApiPlatform\Metadata\Put;
 use App\Repository\AdresseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AdresseRepository::class)]
 #[ORM\Table('adresse', 'std')]
@@ -42,21 +44,26 @@ class Adresse
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'adresse_id')]
+    #[Groups(['read'])]
     private int $id;
 
     #[Assert\NotBlank(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(type: Types::TEXT, nullable: false)]
     private ?string $strasse = null;
 
     #[Assert\NotBlank(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 10, nullable: false)]
     private ?string $plz = null;
 
     #[Assert\NotBlank(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(type: Types::TEXT, nullable: false)]
     private ?string $ort = null;
 
     #[Assert\NotBlank(groups: ['write'])]
+    #[Groups(['read', 'write'])]
     #[ORM\Column(length: 2, nullable: false)]
     private ?string $bundesland = null;
 

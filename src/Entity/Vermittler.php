@@ -6,6 +6,7 @@ use App\Repository\VermittlerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VermittlerRepository::class)]
 #[ORM\Table('vermittler', 'std')]
@@ -16,15 +17,19 @@ class Vermittler
     #[ORM\Column]
     private int $id;
 
+    #[Groups(['read'])]
     #[ORM\Column(length: 36)]
     private ?string $nummer = null;
 
+    #[Groups(['read'])]
     #[ORM\Column(length: 255)]
     private ?string $vorname = null;
 
+    #[Groups(['read'])]
     #[ORM\Column(length: 255)]
     private ?string $nachname = null;
 
+    #[Groups(['read'])]
     #[ORM\Column(length: 255)]
     private ?string $firma = null;
 

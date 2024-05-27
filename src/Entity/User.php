@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [new GetCollection()],
     uriVariables: [
         'id' => new Link(
-            fromProperty: 'kunde_user',
+            fromProperty: 'kundeUser',
             fromClass: Kunde::class,
 
         )
@@ -55,6 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private int $id;
 
     #[Assert\Email(groups: ['write'])]
+    #[Groups(['read'])]
     #[ORM\Column(length: 200, unique: true)]
     private ?string $email = null;
 
@@ -71,13 +72,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // Groß/Kleinbuchstaben
     #[Assert\Regex(pattern: '/[A-Z]+/', groups: ['write'])]
     #[Assert\Regex(pattern: '/[a-z]+/', groups: ['write'])]
+    #[Groups(['write'])]
     private ?string $plainPassword = null;
 
-    #[ORM\OneToOne(inversedBy: 'kunde_user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'kundeUser', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'kundenid', referencedColumnName: 'id', nullable: false)]
     private ?Kunde $kunde = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?bool $aktiv = null;
 
     public function getId(): int
