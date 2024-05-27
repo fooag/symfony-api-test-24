@@ -42,7 +42,7 @@ class SoftDeletableExtension implements QueryCollectionExtensionInterface, Query
         if (Kunde::class !== $resourceClass) {
             return;
         }
-        
+
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->andWhere(sprintf('%s.geloescht = 0', $rootAlias));
     }
