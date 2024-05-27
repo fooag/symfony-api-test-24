@@ -5,10 +5,12 @@ namespace App\Entity;
 use App\Repository\VermittlerUserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: VermittlerUserRepository::class)]
 #[ORM\Table(name: 'vermittler_user', schema: 'sec')]
-class VermittlerUser
+class VermittlerUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,7 +20,7 @@ class VermittlerUser
     #[ORM\Column(length: 200)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 60)]
+    #[ORM\Column(name: 'passwd', length: 60)]
     private ?string $password = null;
 
     #[ORM\Column]
@@ -84,5 +86,20 @@ class VermittlerUser
     public function setVermittler(?Vermittler $vermittler): void
     {
         $this->vermittler = $vermittler;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_VERMITTLER'];
+    }
+
+    public function eraseCredentials()
+    {
+        return;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 }
