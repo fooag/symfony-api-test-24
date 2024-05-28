@@ -8,9 +8,15 @@ use App\Entity\VermittlerUser;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class VermittlerUserFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher
+    ) {
+    }
+
     public function load(ObjectManager $manager)
     {
         $this->create(
@@ -38,8 +44,8 @@ class VermittlerUserFixtures extends Fixture implements DependentFixtureInterfac
     ): void {
         $user = new VermittlerUser();
         $user->vermittler = $this->getReference($reference);
-        $user->email = 'email@email.com';
-        $user->password = 'hackme';
+        $user->email = "$reference@email.com";
+        $user->password = $this->passwordHasher->hashPassword($user, 'hackme');
         $user->aktiv = $aktiv;
 
         $manager->persist($user);

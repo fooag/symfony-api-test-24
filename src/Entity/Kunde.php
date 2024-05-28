@@ -2,11 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Enumeration\Geschlecht;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    shortName: 'Kunden',
+    security: 'is_granted("ROLE_VERMITTLER")'
+)]
+#[GetCollection(uriTemplate: '/kunden')]
 #[ORM\Entity]
 #[ORM\Table(name: 'tbl_kunden', schema: 'std')]
 class Kunde

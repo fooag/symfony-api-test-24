@@ -31,11 +31,13 @@
         "symfony/yaml": "6.2.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.36",
         "dama/doctrine-test-bundle": "^7",
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "6.2.*",
         "symfony/debug-bundle": "6.2.*",
+        "symfony/http-client": "6.2.*",
+        "symfony/maker-bundle": "^1.36",
         "symfony/phpunit-bridge": "^6.2",
         "symfony/stopwatch": "6.2.*",
         "symfony/web-profiler-bundle": "6.2.*"
