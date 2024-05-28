@@ -17,6 +17,7 @@ security:
         login:
             pattern: ^/login
             provider: vermittler_users
+            user_checker: App\Security\VermittlerAuthenticationChecker
             stateless: true
             json_login:
                 check_path: /login
