@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -15,7 +14,6 @@ class Vermittler
     public int $id;
 
     #[ORM\Column(length: 36)]
-    #[ORM\GeneratedValue(strategy: 'NONE')]
     public string $nummer;
 
     #[ORM\Column]
