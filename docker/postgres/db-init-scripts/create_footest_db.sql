@@ -72,6 +72,8 @@ INSERT INTO std.vermittler (id, nummer, vorname, nachname, firma) VALUES
 (3000, 'E065D5A8', 'Christian', 'Hauser', 'VP-Felder GmbH'),
 (4000, '9B39F9FA', 'Fabian', 'Winkel', 'Fondshaus AG');
 
+GRANT USAGE, SELECT ON SEQUENCE std.vermittler_id_seq TO web;
+
 CREATE TABLE std.tbl_kunden (
     id varchar (36) NOT NULL default (upper(left(gen_random_uuid()::text, 8))) PRIMARY KEY,
     name varchar (255),
@@ -113,6 +115,8 @@ INSERT INTO std.adresse (strasse, plz, ort, bundesland) VALUES
 ('Müllerstrasse 8', '13685', 'Marlow', 'BB'),
 ('Müllerdamm Allee 178', '11447', 'Burgenstaedt', 'BB')
 ;
+
+GRANT USAGE, SELECT ON SEQUENCE std.adresse_adresse_id_seq TO web;
 
 CREATE TABLE std.kunde_adresse (
     kunde_id varchar (36) NOT NULL,
@@ -157,6 +161,8 @@ INSERT INTO sec.vermittler_user (email, passwd, vermittler_id, aktiv, last_login
 ('chauser@vp-felder.de', crypt('hauser', gen_salt('bf', 10)), 3000, 0, now() - interval '3 years'),
 ('c_karasius@fondshaus.ag', crypt('supersicher', gen_salt('bf', 10)), 2000, 1, NULL);
 
+GRANT USAGE, SELECT ON SEQUENCE sec.vermittler_user_id_seq TO web;
+
 CREATE TABLE sec.user (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     email varchar (200),
@@ -172,3 +178,5 @@ INSERT INTO sec.user (email, passwd, kundenid, aktiv, last_login) VALUES
 ('sezen@example.net', crypt('aksu', gen_salt('bf', 10)), '80BA9796', 1, NULL),
 ('eleftheria@example.net', crypt('arvanitaki', gen_salt('bf', 10)), '80B4F645', 0, now() - interval '3 days'),
 ('ebba@example.net', crypt('forsberg', gen_salt('bf', 10)), NULL, 1, now());
+
+GRANT USAGE, SELECT ON SEQUENCE sec.user_id_seq TO web;#
