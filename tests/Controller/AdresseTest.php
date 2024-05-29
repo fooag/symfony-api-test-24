@@ -2,30 +2,32 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Adresse;
 use App\Entity\Kunde;
+use App\Entity\KundeAdresse;
 use App\Entity\VermittlerUser;
 use App\Tests\AbstractApiTestBase;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Component\HttpFoundation\Response;
 
-class KundeTestBase extends AbstractApiTestBase
+class AdresseTest extends AbstractApiTestBase
 {
-    public function testNeedsAuthenticationFor_Foo_Kunden(): void
+    public function testNeedsAuthentication(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/foo/kunden');
+        $client->request('GET', '/foo/adressen');
 
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testKundenAreOnlyRetrievedForAuthenticatedVermittlerUser(): void
+    public function testAdressenAreOnlyRetrievedForAuthenticatedVermittlerUser(): void
     {
         $client = $this->createClientWithCredentials(
             username: 'vermittler_klaus_warner@email.com',
             password: 'hackme',
         );
-        $client->request('GET', '/foo/kunden');
+        $response = $client->request('GET', '/foo/adressen');
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -34,7 +36,7 @@ class KundeTestBase extends AbstractApiTestBase
     /**
      * @dataProvider activeVermittlerEmailDataProvider
      */
-    public function testOnlyActiveKundenOwnedByVermittlerAreRetrieved(string $email): void
+    public function testOnlyActiveAdressenOwnedByVermittlerAreRetrieved(string $email): void
     {
         $user = static::getContainer()
             ->get(EntityManagerInterface::class)
@@ -44,20 +46,28 @@ class KundeTestBase extends AbstractApiTestBase
             ])
         ;
 
-        $kunden = static::getContainer()
+        $adresseFqns = Adresse::class;
+        $kundeAdresseFqns = KundeAdresse::class;
+        $kundeFqns = Kunde::class;
+        $adressen = static::getContainer()
             ->get(EntityManagerInterface::class)
-            ->getRepository(Kunde::class)
-            ->findBy([
-                'vermittler' => $user->vermittler,
-                'geloescht' => 0,
-            ])
-        ;
+            ->createQuery(<<<DQL
+            SELECT adresse
+            FROM $adresseFqns adresse
+            JOIN $kundeAdresseFqns kundeAdresse WITH kundeAdresse.adresse = adresse.id AND kundeAdresse.geloescht = :false
+            JOIN $kundeFqns kunde WITH kundeAdresse.kunde = kunde.id AND kunde.geloescht = :zero
+            WHERE kunde.vermittler = :vermittler
+        DQL)
+            ->setParameter('false', false)
+            ->setParameter('zero', 0)
+            ->setParameter('vermittler', $user->vermittler)
+            ->getResult();
 
         $client = $this->createClientWithCredentials(
             username: $email,
             password: 'hackme',
         );
-        $response = $client->request('GET', '/foo/kunden');
+        $response = $client->request('GET', '/foo/adressen');
 
         self::assertResponseIsSuccessful();
         self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -65,13 +75,13 @@ class KundeTestBase extends AbstractApiTestBase
 
         $json = json_decode($response->getContent(), true);
         self::assertEquals(
-            expected: count($kunden),
+            expected: count($adressen),
             actual: $json['hydra:totalItems']
         );
 
-        $kundenIds = array_column($kunden, 'id');
+        $adressenIds = array_column($adressen, 'id');
         foreach ($json['hydra:member'] as $hydraMember) {
-            self::assertContains($hydraMember['id'], $kundenIds);
+            self::assertContains($hydraMember['id'], $adressenIds);
         }
     }
 
@@ -83,23 +93,5 @@ class KundeTestBase extends AbstractApiTestBase
     {
         yield 'vermittler_klaus_warner@email.com' => ['vermittler_klaus_warner@email.com'];
         yield 'vermittler_svenja_schuster@email.com' => ['vermittler_svenja_schuster@email.com'];
-    }
-
-    public function testVermittlerIsNotPartOfKundenResponse(): void
-    {
-        $client = $this->createClientWithCredentials(
-            username: 'vermittler_klaus_warner@email.com',
-            password: 'hackme',
-        );
-        $response = $client->request('GET', '/foo/kunden');
-
-        self::assertResponseIsSuccessful();
-        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
-        self::assertMatchesResourceCollectionJsonSchema(Kunde::class);
-
-        $json = json_decode($response->getContent(), true);
-        foreach ($json['hydra:member'] as $hydraMember) {
-            self::assertArrayNotHasKey('vermittler', $hydraMember);
-        }
     }
 }

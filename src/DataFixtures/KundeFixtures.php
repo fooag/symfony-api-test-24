@@ -29,6 +29,7 @@ class KundeFixtures  extends Fixture implements DependentFixtureInterface
                 1 => $this->getReference(VermittlerFixtures::SVENJA_SCHUSTER),
                 2 => $this->getReference(VermittlerFixtures::VINCENT_VINCENT),
             };
+            $this->addReference("kunde_$i", $kunde);
             $manager->persist($kunde);
         }
         $manager->flush();
