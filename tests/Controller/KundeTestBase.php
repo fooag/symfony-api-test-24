@@ -4,12 +4,12 @@ namespace App\Tests\Controller;
 
 use App\Entity\Kunde;
 use App\Entity\VermittlerUser;
-use App\Tests\AbstractApiTest;
+use App\Tests\AbstractApiTestBase;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Component\HttpFoundation\Response;
 
-class KundeTest extends AbstractApiTest
+class KundeTestBase extends AbstractApiTestBase
 {
     public function testNeedsAuthenticationFor_Foo_Kunden(): void
     {

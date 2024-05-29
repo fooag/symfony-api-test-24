@@ -7,7 +7,7 @@ namespace App\Tests;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Symfony\Bundle\Test\Client;
 
-class AbstractApiTest extends ApiTestCase
+class AbstractApiTestBase extends ApiTestCase
 {
     /** @var array<string, string> */
     private array $tokens = [];
