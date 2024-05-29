@@ -2,7 +2,6 @@
 
 namespace App\Tests\Controller;
 
-use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Kunde;
 use App\Entity\VermittlerUser;
 use App\Tests\AbstractApiTest;
@@ -84,5 +83,23 @@ class KundeTest extends AbstractApiTest
     {
         yield 'vermittler_klaus_warner@email.com' => ['vermittler_klaus_warner@email.com'];
         yield 'vermittler_svenja_schuster@email.com' => ['vermittler_svenja_schuster@email.com'];
+    }
+
+    public function testVermittlerIsNotPartOfKundenResponse(): void
+    {
+        $client = $this->createClientWithCredentials(
+            username: 'vermittler_klaus_warner@email.com',
+            password: 'hackme',
+        );
+        $response = $client->request('GET', '/foo/kunden');
+
+        self::assertResponseIsSuccessful();
+        self::assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        self::assertMatchesResourceCollectionJsonSchema(Kunde::class);
+
+        $json = json_decode($response->getContent(), true);
+        foreach ($json['hydra:member'] as $hydraMember) {
+            self::assertArrayNotHasKey('vermittler', $hydraMember);
+        }
     }
 }
