@@ -21,7 +21,7 @@ class KundeFixtures  extends Fixture implements DependentFixtureInterface
             $kunde->vorname = "Vorname #$i";
             $kunde->nachname = "Nachname #$i";
             $kunde->geburtsdatum = (new DateTime('2000-01-01'))->modify('+1 year');
-            $kunde->geschlecht = Geschlecht::DIVERS;
+            $kunde->geschlecht = Geschlecht::DIVERS->value;
             $kunde->firma = "Vorname #$i";
             $kunde->geloescht = $i < 3 ? 1 : 0;
             $kunde->vermittler = match ($i % 3) {

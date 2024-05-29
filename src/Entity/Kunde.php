@@ -61,12 +61,12 @@ class Kunde
     public int $geloescht;
 
     #[Assert\Choice(
-        options: Geschlecht::class,
+        callback: [Geschlecht::class, 'cases'],
         groups: ['kunde:write'])
     ]
     #[Groups(['kunde:read', 'kunde:write'])]
-    #[ORM\Column(type: Types::STRING, nullable: true, enumType: Geschlecht::class)]
-    public ?Geschlecht $geschlecht;
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    public ?string $geschlecht;
 
     #[Groups(['kunde:read', 'kunde:write'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
