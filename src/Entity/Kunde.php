@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Enumeration\Geschlecht;
+use App\Extension\ApiPlatform\State\KundePostProcessor;
 use App\Extension\Doctrine\ORM\Id\CroppedUppercaseUuid4Generator;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
@@ -23,7 +24,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     security: 'is_granted("ROLE_VERMITTLER")',
 )]
 #[GetCollection(uriTemplate: '/kunden')]
-#[Post(uriTemplate: '/kunden', validationContext: ['groups' => ['kunde:write']])]
+#[Post(
+    uriTemplate: '/kunden',
+    validationContext: ['groups' => ['kunde:write']],
+    processor: KundePostProcessor::class,
+)]
 #[Get(uriTemplate: '/kunden/{id}')]
 #[Put(uriTemplate: '/kunden/{id}', validationContext: ['groups' => ['kunde:write']])]
 #[Delete(uriTemplate: '/kunden/{id}')]
@@ -36,7 +41,7 @@ class Kunde
     #[ORM\Column(length: 36)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(CroppedUppercaseUuid4Generator::class)]
-    public readonly string $id;
+    public string $id;
 
     #[Assert\NotBlank(groups: ['kunde:write'])]
     #[Groups(['kunde:read', 'kunde:write'])]
@@ -58,15 +63,15 @@ class Kunde
     public DateTime $geburtsdatum;
 
     #[ORM\Column]
-    public int $geloescht;
+    public int $geloescht = 0;
 
     #[Assert\Choice(
-        options: Geschlecht::class,
+        callback: [Geschlecht::class, 'cases'],
         groups: ['kunde:write'])
     ]
     #[Groups(['kunde:read', 'kunde:write'])]
-    #[ORM\Column(type: Types::STRING, nullable: true, enumType: Geschlecht::class)]
-    public ?Geschlecht $geschlecht;
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    public ?string $geschlecht;
 
     #[Groups(['kunde:read', 'kunde:write'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]

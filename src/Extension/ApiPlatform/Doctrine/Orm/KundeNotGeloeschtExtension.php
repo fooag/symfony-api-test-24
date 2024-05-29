@@ -2,26 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Extension\Doctrine\Doctrine\Orm;
+namespace App\Extension\ApiPlatform\Doctrine\Orm;
 
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\VermittlerUser;
 use App\Entity\Kunde;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bundle\SecurityBundle\Security;
 
-class KundeOwnedByCurrentVermittlerUserExtension
-    implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+class KundeNotGeloeschtExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    public function __construct(
-        private Security $security
-    ) {
-    }
-
     public function applyToCollection(
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
@@ -49,18 +40,10 @@ class KundeOwnedByCurrentVermittlerUserExtension
             return;
         }
 
-        $user = $this->security->getUser();
-        if ($user === null) {
-            return;
-        }
-
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->join(
-            join: VermittlerUser::class,
-            alias: 'user',
-            conditionType: Join::WITH,
-            condition: sprintf('user = :current_user AND user.vermittler = %s.vermittler', $rootAlias)
+        $queryBuilder->andWhere(
+            sprintf('%s.geloescht = :zero', $rootAlias)
         );
-        $queryBuilder->setParameter('current_user', $user);
+        $queryBuilder->setParameter('zero', 0);
     }
 }
