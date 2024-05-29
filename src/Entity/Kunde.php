@@ -41,7 +41,7 @@ class Kunde
     #[ORM\Column(length: 36)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(CroppedUppercaseUuid4Generator::class)]
-    public readonly string $id;
+    public string $id;
 
     #[Assert\NotBlank(groups: ['kunde:write'])]
     #[Groups(['kunde:read', 'kunde:write'])]
