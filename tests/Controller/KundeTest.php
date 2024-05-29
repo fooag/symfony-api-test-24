@@ -5,11 +5,12 @@ namespace App\Tests\Controller;
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Entity\Kunde;
 use App\Entity\VermittlerUser;
+use App\Tests\AbstractApiTest;
 use Doctrine\ORM\EntityManagerInterface;
 use Generator;
 use Symfony\Component\HttpFoundation\Response;
 
-class KundeTest extends ApiTestCase
+class KundeTest extends AbstractApiTest
 {
     public function testNeedsAuthenticationFor_Foo_Kunden(): void
     {
@@ -21,16 +22,10 @@ class KundeTest extends ApiTestCase
 
     public function testKundenAreOnlyRetrievedForAuthenticatedVermittlerUser(): void
     {
-        $user = static::getContainer()
-            ->get(EntityManagerInterface::class)
-            ->getRepository(VermittlerUser::class)
-            ->findOneBy([
-                'email' => 'vermittler_klaus_warner@email.com',
-            ])
-        ;
-
-        $client = static::createClient();
-        $client->loginUser($user);
+        $client = $this->createClientWithCredentials(
+            username: 'vermittler_klaus_warner@email.com',
+            password: 'hackme',
+        );
         $client->request('GET', '/foo/kunden');
 
         self::assertResponseIsSuccessful();
@@ -38,7 +33,7 @@ class KundeTest extends ApiTestCase
     }
 
     /**
-     * @dataProvider vermittlerEmailDataProvider
+     * @dataProvider activeVermittlerEmailDataProvider
      */
     public function testOnlyActiveKundenOwnedByVermittlerAreRetrieved(string $email): void
     {
@@ -59,8 +54,10 @@ class KundeTest extends ApiTestCase
             ])
         ;
 
-        $client = static::createClient();
-        $client->loginUser($user);
+        $client = $this->createClientWithCredentials(
+            username: $email,
+            password: 'hackme',
+        );
         $response = $client->request('GET', '/foo/kunden');
 
         self::assertResponseIsSuccessful();
@@ -75,7 +72,7 @@ class KundeTest extends ApiTestCase
 
         $kundenIds = array_column($kunden, 'id');
         foreach ($json['hydra:member'] as $hydraMember) {
-            self::assertTrue(in_array($hydraMember['id'], $kundenIds));
+            self::assertContains($hydraMember['id'], $kundenIds);
         }
     }
 
@@ -83,10 +80,9 @@ class KundeTest extends ApiTestCase
      * @dataProvider
      * @return Generator<int ,string>
      */
-    public function vermittlerEmailDataProvider(): Generator
+    public function activeVermittlerEmailDataProvider(): Generator
     {
         yield 'vermittler_klaus_warner@email.com' => ['vermittler_klaus_warner@email.com'];
         yield 'vermittler_svenja_schuster@email.com' => ['vermittler_svenja_schuster@email.com'];
-        yield 'vermittler_vincent_vincent@email.com' => ['vermittler_vincent_vincent@email.com'];
     }
 }
