@@ -17,7 +17,7 @@ class KundeAdresse
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Adresse::class)]
-    #[ORM\JoinColumn(name: 'adresse_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'adresse_id', referencedColumnName: 'adresse_id')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     public Adresse $adresse;
 

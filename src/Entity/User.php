@@ -22,7 +22,7 @@ class User
     public string $password;
 
     #[ORM\Column]
-    public ?bool $aktiv;
+    public int $aktiv;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     public ?DateTime $lastLogin;

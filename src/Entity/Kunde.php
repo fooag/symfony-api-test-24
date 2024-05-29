@@ -9,9 +9,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Enumeration\Geschlecht;
+use App\Extension\ApiPlatform\State\KundeDeleteProcessor;
 use App\Extension\ApiPlatform\State\KundePostProcessor;
 use App\Extension\Doctrine\ORM\Id\CroppedUppercaseUuid4Generator;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -31,7 +34,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[Get(uriTemplate: '/kunden/{id}')]
 #[Put(uriTemplate: '/kunden/{id}', validationContext: ['groups' => ['kunde:write']])]
-#[Delete(uriTemplate: '/kunden/{id}')]
+#[Delete(
+    uriTemplate: '/kunden/{id}',
+    processor: KundeDeleteProcessor::class,
+)]
 #[ORM\Entity]
 #[ORM\Table(name: 'tbl_kunden', schema: 'std')]
 class Kunde
@@ -80,4 +86,15 @@ class Kunde
     #[ORM\ManyToOne(targetEntity: Vermittler::class)]
     #[ORM\JoinColumn(name: 'vermittler_id', referencedColumnName: 'id', nullable: false)]
     public Vermittler $vermittler;
+
+    #[ORM\OneToMany(mappedBy: 'kunde', targetEntity: KundeAdresse::class)]
+    public Collection $adressen;
+
+    #[ORM\OneToOne(mappedBy: 'kunde', targetEntity: User::class)]
+    public User $user;
+
+    public function __construct()
+    {
+        $this->adressen = new ArrayCollection();
+    }
 }

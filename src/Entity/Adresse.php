@@ -11,8 +11,8 @@ class Adresse
 {
     #[ORM\Id]
     #[ORM\Column(name: 'adresse_id')]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    public readonly int $id;
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    public int $id;
 
     #[ORM\Column(type: Types::TEXT)]
     public string $strasse;
