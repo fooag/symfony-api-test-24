@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Enumeration\Geschlecht;
+use App\Extension\ApiPlatform\State\KundePostProcessor;
 use App\Extension\Doctrine\ORM\Id\CroppedUppercaseUuid4Generator;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
@@ -23,7 +24,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     security: 'is_granted("ROLE_VERMITTLER")',
 )]
 #[GetCollection(uriTemplate: '/kunden')]
-#[Post(uriTemplate: '/kunden', validationContext: ['groups' => ['kunde:write']])]
+#[Post(
+    uriTemplate: '/kunden',
+    validationContext: ['groups' => ['kunde:write']],
+    processor: KundePostProcessor::class,
+)]
 #[Get(uriTemplate: '/kunden/{id}')]
 #[Put(uriTemplate: '/kunden/{id}', validationContext: ['groups' => ['kunde:write']])]
 #[Delete(uriTemplate: '/kunden/{id}')]
@@ -58,7 +63,7 @@ class Kunde
     public DateTime $geburtsdatum;
 
     #[ORM\Column]
-    public int $geloescht;
+    public int $geloescht = 0;
 
     #[Assert\Choice(
         callback: [Geschlecht::class, 'cases'],
