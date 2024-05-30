@@ -9,7 +9,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Extension\ApiPlatform\State\UserDeleteProcessor;
-use App\Extension\ApiPlatform\State\UserPasswordHasherProcessor;
+use App\Extension\ApiPlatform\State\UserPostProcessor;
+use App\Extension\ApiPlatform\State\UserPutProcessor;
 use App\Security\UserPasswordValidator;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
@@ -29,13 +30,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post(
     uriTemplate: '/user',
     validationContext: ['groups' => ['user:write']],
-    processor: UserPasswordHasherProcessor::class,
+    processor: UserPostProcessor::class,
 )]
 #[Get(uriTemplate: '/user/{id}')]
 #[Put(
     uriTemplate: '/user/{id}',
     validationContext: ['groups' => ['user:write']],
-    processor: UserPasswordHasherProcessor::class,
+    processor: UserPutProcessor::class,
 )]
 #[Delete(
     uriTemplate: '/user/{id}',
@@ -47,12 +48,12 @@ class User implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     public int $id;
 
     #[Assert\Email(groups: ['user:write'])]
     #[Assert\NotBlank(groups: ['user:write'])]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'kunde:read'])]
     #[SerializedName('username')]
     #[ORM\Column(length: 200)]
     public string $email;
@@ -85,14 +86,16 @@ class User implements PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'passwd', length: 60)]
     public string $password;
 
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'kunde:read'])]
     #[ORM\Column]
-    public int $aktiv;
+    public int $aktiv = 1;
 
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'kunde:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     public ?DateTime $lastLogin;
 
+    #[Assert\NotBlank(groups: ['user:write'])]
+    #[Groups(['user:write'])]
     #[ORM\ManyToOne(targetEntity: Kunde::class)]
     #[ORM\JoinColumn(name: 'kundenid', referencedColumnName: 'id', nullable: true)]
     public ?Kunde $kunde = null;
