@@ -77,8 +77,9 @@ class User implements PasswordAuthenticatedUserInterface
     public string $email;
 
     // Der Regex ist für beispielsweise russische Eingaben nicht wirklich geeignet
-    // Soll für diese Aufgabe jerdoch ausreichend sein
-    #[Assert\Length(min: 8)]
+    // Soll für diese Aufgabe jedoch ausreichend sein
+    #[Assert\Length(min: 8, groups: ['user:write'])]
+    #[Assert\NotBlank(groups: ['user:write'])]
     #[Assert\Regex(
         pattern: '/\d+/',
         message: 'Das Passwort muss mindestens eine Zahl beeinhalten.',
