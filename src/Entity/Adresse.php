@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     security: 'is_granted("ROLE_VERMITTLER")'
 )]
 #[ApiResource(
-    shortName: 'Adressen',
+    shortName: 'Kunden',
     operations: [
         new GetCollection(
             uriTemplate: '/kunden/{id}/adressen',
