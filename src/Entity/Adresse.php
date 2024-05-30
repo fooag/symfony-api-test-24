@@ -93,6 +93,8 @@ class Adresse
     #[ORM\Column]
     public string $bundesland;
 
+    #[Groups(['adresse:read', 'kunde:read'])]
+    #[SerializedName('details')]
     #[ORM\OneToOne(mappedBy: 'adresse', targetEntity: KundeAdresse::class)]
     public ?KundeAdresse $kundeAdresse;
 }

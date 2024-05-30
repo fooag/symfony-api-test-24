@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'kunde_adresse', schema: 'std')]
@@ -21,9 +21,11 @@ class KundeAdresse
     #[ORM\GeneratedValue(strategy: 'NONE')]
     public Adresse $adresse;
 
+    #[Groups(['adresse:read', 'kunde:read'])]
     #[ORM\Column(options: ['default' => false])]
     public bool $geschaeftlich = false;
 
+    #[Groups(['adresse:read', 'kunde:read'])]
     #[ORM\Column]
     public bool $rechnungsadresse;
 
