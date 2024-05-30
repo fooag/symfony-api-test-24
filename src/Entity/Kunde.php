@@ -87,8 +87,12 @@ class Kunde
     #[ORM\JoinColumn(name: 'vermittler_id', referencedColumnName: 'id', nullable: false)]
     public Vermittler $vermittler;
 
-    #[ORM\OneToMany(mappedBy: 'kunde', targetEntity: KundeAdresse::class)]
-    public Collection $adressen;
+    #[Groups(['kunde:read'])]
+    #[ORM\ManyToMany(targetEntity: Adresse::class)]
+    #[ORM\JoinTable(name: 'kunde_adresse', schema: 'std')]
+    #[ORM\JoinColumn(name: 'kunde_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'adresse_id', referencedColumnName: 'adresse_id')]
+    public ?Collection $adressen;
 
     #[Groups(['kunde:read'])]
     #[ORM\OneToOne(mappedBy: 'kunde', targetEntity: User::class)]
