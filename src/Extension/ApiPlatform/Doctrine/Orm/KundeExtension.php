@@ -14,7 +14,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class KundeOwnedByCurrentVermittlerUserExtension
+class KundeExtension
     implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     public function __construct(
@@ -62,5 +62,11 @@ class KundeOwnedByCurrentVermittlerUserExtension
             condition: sprintf('user = :current_user AND user.vermittler = %s.vermittler', $rootAlias)
         );
         $queryBuilder->setParameter('current_user', $user);
+
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        $queryBuilder->andWhere(
+            sprintf('%s.geloescht = :zero', $rootAlias)
+        );
+        $queryBuilder->setParameter('zero', 0);
     }
 }
