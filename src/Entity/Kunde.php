@@ -90,6 +90,7 @@ class Kunde
     #[ORM\OneToMany(mappedBy: 'kunde', targetEntity: KundeAdresse::class)]
     public Collection $adressen;
 
+    #[Groups(['kunde:read'])]
     #[ORM\OneToOne(mappedBy: 'kunde', targetEntity: User::class)]
     public User $user;
 
