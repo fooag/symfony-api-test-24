@@ -2,6 +2,7 @@ security:
     enable_authenticator_manager: true
 
     password_hashers:
+        App\Entity\User: 'auto'
         App\Entity\VermittlerUser: 'auto'
 
     providers:
