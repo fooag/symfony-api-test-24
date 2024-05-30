@@ -13,6 +13,7 @@ use App\Extension\ApiPlatform\State\AdresseDeleteProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -30,16 +31,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'adresse', schema: 'std')]
 class Adresse
 {
+    #[Groups(['adresse:read'])]
+    #[SerializedName('adresseId')]
     #[ORM\Id]
     #[ORM\Column(name: 'adresse_id')]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     public int $id;
-
-    #[Groups(['adresse:read'])]
-    public function getAdresseId(): int
-    {
-        return $this->id;
-    }
 
     #[Assert\NotBlank(groups: ['adresse:write'])]
     #[Groups(['adresse:read', 'adresse:write'])]
