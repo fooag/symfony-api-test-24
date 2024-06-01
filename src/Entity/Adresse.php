@@ -32,7 +32,6 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             uriTemplate: '/adressen/{id}',
             validationContext: ['groups' => ['adresse:write']],
-            processor: AdresseDeleteProcessor::class
         ),
         new Delete(
             uriTemplate: '/adressen/{id}',
