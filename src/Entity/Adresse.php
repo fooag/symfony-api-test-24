@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(uriTemplate: '/adressen'),
         new Post(
             uriTemplate: '/adressen',
-            denormalizationContext: ['groups' => ['adresse:write', 'adresse:write:creation']],
+            denormalizationContext: ['groups' => ['adresse:write', 'kunde_adresse:write', 'adresse:write:creation']],
             validationContext: ['groups' => ['adresse:write', 'adresse:write:creation']],
             processor: AdressePostProcessor::class
         ),
@@ -38,8 +38,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             processor: AdresseDeleteProcessor::class
         ),
     ],
-    normalizationContext: ['groups' => ['adresse:read']],
-    denormalizationContext: ['groups' => ['adresse:write']],
+    normalizationContext: ['groups' => ['adresse:read', 'kunde_adresse:read']],
+    denormalizationContext: ['groups' => ['adresse:write', 'kunde_adresse:write']],
     security: 'is_granted("ROLE_VERMITTLER")'
 )]
 #[ApiResource(
