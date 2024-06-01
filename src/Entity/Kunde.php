@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     shortName: 'Kunden',
-    normalizationContext: ['groups' => ['kunde:read']],
+    normalizationContext: ['groups' => ['kunde:read', 'adresse:read', 'user:read']],
     denormalizationContext: ['groups' => ['kunde:write']],
     security: 'is_granted("ROLE_VERMITTLER")',
 )]

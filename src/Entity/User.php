@@ -71,7 +71,7 @@ class User implements PasswordAuthenticatedUserInterface
 
     #[Assert\Email(groups: ['user:write'])]
     #[Assert\NotBlank(groups: ['user:write'])]
-    #[Groups(['user:read', 'user:write', 'kunde:read'])]
+    #[Groups(['user:read', 'user:write'])]
     #[SerializedName('username')]
     #[ORM\Column(length: 200)]
     public string $email;
@@ -105,11 +105,11 @@ class User implements PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'passwd', length: 60)]
     public string $password;
 
-    #[Groups(['user:read', 'kunde:read'])]
+    #[Groups(['user:read'])]
     #[ORM\Column]
     public int $aktiv = 1;
 
-    #[Groups(['user:read', 'kunde:read'])]
+    #[Groups(['user:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     public ?DateTime $lastLogin;
 

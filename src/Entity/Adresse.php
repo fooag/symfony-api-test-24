@@ -63,7 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'adresse', schema: 'std')]
 class Adresse
 {
-    #[Groups(['adresse:read', 'kunde:read'])]
+    #[Groups(['adresse:read'])]
     #[SerializedName('adresseId')]
     #[ORM\Id]
     #[ORM\Column(name: 'adresse_id')]
@@ -71,18 +71,18 @@ class Adresse
     public int $id;
 
     #[Assert\NotBlank(groups: ['adresse:write'])]
-    #[Groups(['adresse:read', 'adresse:write', 'kunde:read'])]
+    #[Groups(['adresse:read', 'adresse:write'])]
     #[ORM\Column(type: Types::TEXT)]
     public string $strasse;
 
     #[Assert\NotBlank(groups: ['adresse:write'])]
     #[Assert\Length(max: 10, groups: ['adresse:write'])]
-    #[Groups(['adresse:read', 'adresse:write', 'kunde:read'])]
+    #[Groups(['adresse:read', 'adresse:write'])]
     #[ORM\Column(length: 10)]
     public string $plz;
 
     #[Assert\NotBlank(groups: ['adresse:write'])]
-    #[Groups(['adresse:read', 'adresse:write', 'kunde:read'])]
+    #[Groups(['adresse:read', 'adresse:write'])]
     #[ORM\Column(type: Types::TEXT)]
     public string $ort;
 
@@ -92,11 +92,11 @@ class Adresse
     ]
     #[Assert\Length(exactly: 2, groups: ['adresse:write'])]
     #[Assert\NotBlank(groups: ['adresse:write'])]
-    #[Groups(['adresse:read', 'adresse:write', 'kunde:read'])]
+    #[Groups(['adresse:read', 'adresse:write'])]
     #[ORM\Column]
     public string $bundesland;
 
-    #[Groups(['adresse:read', 'adresse:write', 'kunde:read'])]
+    #[Groups(['adresse:read', 'adresse:write'])]
     #[SerializedName('details')]
     #[ORM\OneToOne(mappedBy: 'adresse', targetEntity: KundeAdresse::class)]
     public ?KundeAdresse $kundeAdresse;
