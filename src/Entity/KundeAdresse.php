@@ -47,11 +47,11 @@ class KundeAdresse
     #[ORM\GeneratedValue(strategy: 'NONE')]
     public Adresse $adresse;
 
-    #[Groups(['kunde_adresse:read', 'adresse:read', 'kunde:read'])]
+    #[Groups(['kunde_adresse:read', 'adresse:read', 'kunde:read', 'adresse:write'])]
     #[ORM\Column(options: ['default' => false])]
     public bool $geschaeftlich = false;
 
-    #[Groups(['kunde_adresse:read', 'adresse:read', 'kunde:read'])]
+    #[Groups(['kunde_adresse:read', 'adresse:read', 'kunde:read', 'adresse:write'])]
     #[ORM\Column]
     public bool $rechnungsadresse = false;
 

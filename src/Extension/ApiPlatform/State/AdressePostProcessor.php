@@ -21,13 +21,11 @@ class AdressePostProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
-        $kundeAdresse = new KundeAdresse();
-        $kundeAdresse->kunde = $data->kunde;
-        $kundeAdresse->adresse = $data;
+        $data->kundeAdresse->kunde = $data->kunde;
+        $data->kundeAdresse->adresse = $data;
 
-        $this->em->persist($kundeAdresse);
+        $this->em->persist($data->kundeAdresse);
 
-        $data->kundeAdresse = $kundeAdresse;
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
     }
 }
