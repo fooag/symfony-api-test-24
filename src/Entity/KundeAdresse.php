@@ -53,7 +53,7 @@ class KundeAdresse
 
     #[Groups(['kunde_adresse:read', 'adresse:read', 'kunde:read'])]
     #[ORM\Column]
-    public bool $rechnungsadresse;
+    public bool $rechnungsadresse = false;
 
     #[ORM\Column(options: ['default' => false])]
     public bool $geloescht = false;

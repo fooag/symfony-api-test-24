@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Enumeration\Bundesland;
 use App\Extension\ApiPlatform\State\AdresseDeleteProcessor;
+use App\Extension\ApiPlatform\State\AdressePostProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -23,12 +24,15 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(uriTemplate: '/adressen'),
         new Post(
             uriTemplate: '/adressen',
-            validationContext: ['groups' => ['adresse:write']]
+            denormalizationContext: ['groups' => ['adresse:write', 'adresse:write:creation']],
+            validationContext: ['groups' => ['adresse:write', 'adresse:write:creation']],
+            processor: AdressePostProcessor::class
         ),
         new Get(uriTemplate: '/adressen/{id}'),
         new Put(
             uriTemplate: '/adressen/{id}',
-            validationContext: ['groups' => ['adresse:write']]
+            validationContext: ['groups' => ['adresse:write']],
+            processor: AdresseDeleteProcessor::class
         ),
         new Delete(
             uriTemplate: '/adressen/{id}',
@@ -93,8 +97,11 @@ class Adresse
     #[ORM\Column]
     public string $bundesland;
 
-    #[Groups(['adresse:read', 'kunde:read'])]
+    #[Groups(['adresse:read', 'adresse:write', 'kunde:read'])]
     #[SerializedName('details')]
     #[ORM\OneToOne(mappedBy: 'adresse', targetEntity: KundeAdresse::class)]
     public ?KundeAdresse $kundeAdresse;
+
+    #[Groups(['adresse:write:creation'])]
+    public Kunde $kunde;
 }
